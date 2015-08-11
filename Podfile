@@ -3,8 +3,9 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '7.0'
 inhibit_all_warnings!
 
-pod 'AFNetworking', '~> 2.5'
-pod 'EGOCache', '~> 2.1'
+#pod 'AFNetworking', '~> 2.5'
+#pod 'EGOCache', '~> 2.1'
+pod 'SDWebImage', '~>3.7'
 pod 'UAProgressView', '~> 0.1'
 
 target :FSImageViewerTests, :exclusive => true do

@@ -22,10 +22,13 @@
 //  THE SOFTWARE.
 //
 
-#import <EGOCache/EGOCache.h>
+//#import <EGOCache/EGOCache.h>
 #import <CommonCrypto/CommonDigest.h>
 #import "FSImageLoader.h"
-#import "AFHTTPRequestOperation.h"
+//#import "AFHTTPRequestOperation.h"
+#import <SDWebImage/SDWebImageManager.h>
+#import <SDWebImage/SDWebImageDownloader.h>
+
 
 @implementation FSImageLoader {
     NSMutableArray *runningRequests;
@@ -55,18 +58,27 @@
 }
 
 - (void)cancelAllRequests {
-    for (AFHTTPRequestOperation *imageRequestOperation in runningRequests) {
-        [imageRequestOperation cancel];
-    }
+//    for (AFHTTPRequestOperation *imageRequestOperation in runningRequests) {
+//        [imageRequestOperation cancel];
+//    }
+    
+    [[SDWebImageManager sharedManager] cancelAll];    
 }
 
 - (void)cancelRequestForUrl:(NSURL *)aURL {
-    for (AFHTTPRequestOperation *imageRequestOperation in runningRequests) {
-        if ([imageRequestOperation.request.URL isEqual:aURL]) {
-            [imageRequestOperation cancel];
-            break;
-        }
-    }
+//    for (AFHTTPRequestOperation *imageRequestOperation in runningRequests) {
+//        if ([imageRequestOperation.request.URL isEqual:aURL]) {
+//            [imageRequestOperation cancel];
+//            break;
+//        }
+//    }
+    
+//    NSArray *operations = [SDWebImageManager sharedManager].runningOperations;
+//    
+//    for (SDWebImageCombinedOperation *operation in operations) {
+//        
+//    }
+    
 }
 
 - (void)loadImageForURL:(NSURL *)aURL progress:(void (^)(float progress))progress image:(void (^)(UIImage *image, NSError *error))imageBlock {
@@ -78,6 +90,21 @@
         imageBlock(nil, error);
     };
     
+    SDWebImageManager *manager = [SDWebImageManager sharedManager];
+    
+    [manager downloadImageWithURL:aURL options:SDWebImageRetryFailed
+                         progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+                             if (progress) {
+                                 progress((float)expectedSize / receivedSize);
+                             }
+                         }
+                        completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
+                            if (imageBlock) {
+                                imageBlock(image,error);
+                            }
+                        }];
+    
+    /*
     NSString *urlString = [[aURL absoluteString] copy];
     NSData *data = [urlString dataUsingEncoding:NSUTF8StringEncoding];
     uint8_t digest[CC_SHA1_DIGEST_LENGTH];
@@ -132,6 +159,8 @@
         
         [imageRequestOperation start];
     }
+    
+    */
 }
 
 @end
