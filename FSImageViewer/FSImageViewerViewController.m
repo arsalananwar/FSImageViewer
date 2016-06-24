@@ -138,12 +138,12 @@
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:[self localizedStringForKey:@"done" withDefault:@"Done"] style:UIBarButtonItemStyleDone target:self action:@selector(done:)];
         self.navigationItem.rightBarButtonItem = doneButton;
         if (!_sharingDisabled) {
-            self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:infoBarButtonItem,shareButton,nil];
+            self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:infoBarButtonItem,shareButton,nil];
         }
     }
     else {
         if (!_sharingDisabled) {
-            self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:infoBarButtonItem,shareButton,nil];
+            self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:infoBarButtonItem,shareButton,nil];
         }
     }
 
