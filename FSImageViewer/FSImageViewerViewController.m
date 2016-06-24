@@ -230,8 +230,8 @@
     id<FSImage> currentImage = _imageSource[[self currentImageIndex]];
     NSAssert(currentImage.image, @"The image must be loaded to share.");
     if (currentImage.image) {
-        if ([_delegate respondsToSelector:@selector(imageViewerViewController:infoButtonPressed:)]) {
-            [_delegate imageViewerViewController:self infoButtonPressed:sender];
+        if ([_delegate respondsToSelector:@selector(imageViewerViewController:infoButtonPressed:atIndex:)]) {
+            [_delegate imageViewerViewController:self infoButtonPressed:sender atIndex:[self currentImageIndex]];
         }
     }
 }

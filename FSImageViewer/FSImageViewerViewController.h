@@ -39,7 +39,8 @@
 - (void)imageViewerViewController:(FSImageViewerViewController *)imageViewerViewController willDismissViewControllerAnimated:(BOOL)animated;
 - (void)imageViewerViewController:(FSImageViewerViewController *)imageViewerViewController didDismissViewControllerAnimated:(BOOL)animated;
 
-- (void)imageViewerViewController:(FSImageViewerViewController *)imageViewerViewController infoButtonPressed:(UIBarButtonItem*)sender;
+- (void)imageViewerViewController:(FSImageViewerViewController *)imageViewerViewController
+                infoButtonPressed:(UIBarButtonItem*)sender atIndex:(NSUInteger)index;
 
 @end
 
