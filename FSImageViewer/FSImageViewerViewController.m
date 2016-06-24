@@ -36,6 +36,7 @@
     BOOL barsHidden;
     BOOL statusBarHidden;
     UIBarButtonItem *shareButton;
+    UIBarButtonItem *infoBarButtonItem;
 }
 
 - (id)initWithImageSource:(id <FSImageSource>)aImageSource {
@@ -126,18 +127,23 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
+    UIButton* infoButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
+    [infoButton addTarget:self action:@selector(infoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    infoBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:infoButton];
     shareButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(share:)];
+    
     shareButton.enabled = NO;
+    infoBarButtonItem.enabled = NO;
     if (self.presentingViewController && (self.modalPresentationStyle == UIModalPresentationFullScreen)) {
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:[self localizedStringForKey:@"done" withDefault:@"Done"] style:UIBarButtonItemStyleDone target:self action:@selector(done:)];
         self.navigationItem.rightBarButtonItem = doneButton;
         if (!_sharingDisabled) {
-            self.navigationItem.leftBarButtonItem = shareButton;
+            self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:infoBarButtonItem,shareButton,nil];
         }
     }
     else {
         if (!_sharingDisabled) {
-            self.navigationItem.rightBarButtonItem = shareButton;
+            self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:infoBarButtonItem,shareButton,nil];
         }
     }
 
@@ -220,6 +226,16 @@
     }
 }
 
+- (void) infoButtonClicked:(id)sender {
+    id<FSImage> currentImage = _imageSource[[self currentImageIndex]];
+    NSAssert(currentImage.image, @"The image must be loaded to share.");
+    if (currentImage.image) {
+        if ([_delegate respondsToSelector:@selector(imageViewerViewController:infoButtonPressed:)]) {
+            [_delegate imageViewerViewController:self infoButtonPressed:sender];
+        }
+    }
+}
+
 - (NSInteger)currentImageIndex {
     return pageIndex;
 }
@@ -285,9 +301,11 @@
                 [self setBarsHidden:NO animated:YES];
             }
             shareButton.enabled = NO;
+            infoBarButtonItem.enabled = NO;
         }
         else {
             shareButton.enabled = YES;
+            infoBarButtonItem.enabled = YES;
         }
         [self setViewState];
     }
@@ -341,10 +359,12 @@
         if (_imageSource[pageIndex].failed) {
             [self setBarsHidden:NO animated:YES];
             shareButton.enabled = NO;
+            infoBarButtonItem.enabled = NO;
         }
         else {
             if (pageIndex == [self currentImageIndex] && _imageSource[pageIndex].image) {
                 shareButton.enabled = YES;
+                infoBarButtonItem.enabled = YES;
                 if (!sameIndex && [_delegate respondsToSelector:@selector(imageViewerViewController:didMoveToImageAtIndex:)]) {
                     [_delegate imageViewerViewController:self didMoveToImageAtIndex:pageIndex];
                 }
